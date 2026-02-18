@@ -1,0 +1,320 @@
+// Prisma schema - matches Laravel MySQL tables
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              Int       @id @default(autoincrement())
+  name            String
+  email           String?   @unique
+  email_verified_at DateTime?
+  password        String?
+  remember_token  String?
+  avatar          String?
+  balance         Decimal   @default(0) @db.Decimal(15, 2)
+  demo_balance    Decimal   @default(0) @db.Decimal(15, 2)
+  type_balance    Int       @default(0)
+  sum_bet         Decimal   @default(0) @db.Decimal(15, 2)
+  sum_to_withdraw Decimal   @default(0) @db.Decimal(15, 2)
+  lose_games      Int       @default(0)
+  admin           Int       @default(0)
+  ban             Int       @default(0)
+  ip              String?
+  ref_id          Int?
+  balance_repost  Decimal   @default(0) @db.Decimal(15, 2)
+  reposts         Int       @default(0)
+  bonus_2         Int       @default(0)
+  vk_id           String?
+  tg_id           String?
+  newYear         Int       @default(0)
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+
+  wheels    Wheel[]
+  x100s     X100[]
+  crashes   Crash[]
+  kenoBets  Keno[]
+  jackpots  Jackpot[]
+  payments  Payment[]
+  withdraws Withdraw[]
+
+  @@map("users")
+}
+
+model Setting {
+  id                Int      @id @default(autoincrement())
+  name              String?
+  meta_tags         String?  @db.Text
+  theme             Int      @default(0)
+  status_wheel      Int      @default(0)
+  status_x100       Int      @default(0)
+  status_keno       Int      @default(0)
+  status_jackpot    Int      @default(0)
+  status_boom       Int      @default(0)
+  crash_status      Int      @default(0)
+  crash_bank        Decimal  @default(0) @db.Decimal(15, 2)
+  crash_boom        Decimal  @default(0) @db.Decimal(15, 2)
+  crash_result      Decimal  @default(0) @db.Decimal(15, 2)
+  crash_profit      Decimal  @default(0) @db.Decimal(15, 2)
+  youtube_crash    Int      @default(0)
+  auto_crash       Int      @default(0)
+  wheel_win         String?
+  wheel_win_number  Int?
+  wheelYmn          Int      @default(1)
+  mult_bonus       String?
+  coeff_bonus      String?
+  youtube          Int      @default(0)
+  auto_wheel       Int      @default(0)
+  random_key_id    Int      @default(0)
+  keno_numbers     String?  @db.Text
+  noGetKeno        String?  @db.Text
+  youtube_keno     Int      @default(0)
+  numberBonusKeno  Int      @default(0)
+  coeffBonusKeno   Int      @default(0)
+  jackpot_rand     Int?
+  jackpot_random   String?  @db.Text
+  jackpot_signature String? @db.Text
+  jackpot_wait     Int      @default(-1)
+  comisia_jackpot  Decimal  @default(0) @db.Decimal(5, 2)
+  X100BonusUser_ID Int     @default(0)
+  X100BonusAvatar  String?
+  win_x100         String?
+  x100WinNumber    Int      @default(0)
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  @@map("settings")
+}
+
+model Wheel {
+  id        Int     @id @default(autoincrement())
+  user_id   Int
+  coff      Int
+  login     String?
+  bet       Decimal @db.Decimal(15, 2)
+  img       String?
+  demo      Int     @default(0)
+  created_at DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("wheels")
+}
+
+model WheelHistory {
+  id        Int     @id @default(autoincrement())
+  number    Int
+  coff      String?
+  random    String? @db.Text
+  signature String? @db.Text
+  created_at DateTime @default(now())
+
+  @@map("wheel_history")
+}
+
+model X100 {
+  id        Int     @id @default(autoincrement())
+  user_id   Int
+  coff      Int?
+  login     String?
+  bet       Decimal @db.Decimal(15, 2)
+  img       String?
+  created_at DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("x100")
+}
+
+model X100History {
+  id        Int     @id @default(autoincrement())
+  number    Int
+  coff      String?
+  random    String? @db.Text
+  signature String? @db.Text
+  created_at DateTime @default(now())
+
+  @@map("x100_history")
+}
+
+model Crash {
+  id        Int     @id @default(autoincrement())
+  user_id   Int
+  bet       Decimal @db.Decimal(15, 2)
+  auto      Decimal @db.Decimal(10, 2)
+  win       Decimal @db.Decimal(15, 2)
+  result    Decimal @default(0) @db.Decimal(15, 2)
+  img       String?
+  login     String?
+  created_at DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("crash")
+}
+
+model CrashHistory {
+  id        Int     @id @default(autoincrement())
+  num       Decimal @db.Decimal(10, 2)
+  created_at DateTime @default(now())
+
+  @@map("crash_history")
+}
+
+model Keno {
+  id        Int     @id @default(autoincrement())
+  user_id   Int
+  bet       Decimal @db.Decimal(15, 2)
+  numbers   String? @db.Text
+  img       String?
+  login     String?
+  chance    Decimal? @db.Decimal(15, 4)
+  created_at DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("keno")
+}
+
+model Jackpot {
+  id        Int     @id @default(autoincrement())
+  user_id   Int
+  bet       Decimal @db.Decimal(15, 2)
+  img       String?
+  login     String?
+  chance    Decimal? @db.Decimal(15, 4)
+  tick_one  Int?
+  tick_two  Int?
+  created_at DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("jackpot")
+}
+
+model JackpotHistory {
+  id        Int     @id @default(autoincrement())
+  user_id   Int
+  login     String?
+  avatar    String?
+  bet       Decimal @db.Decimal(15, 2)
+  win       Decimal @db.Decimal(15, 2)
+  random    String? @db.Text
+  signature String? @db.Text
+  created_at DateTime @default(now())
+
+  @@map("jackpot_history")
+}
+
+model Payment {
+  id           Int     @id @default(autoincrement())
+  user_id      Int
+  login        String?
+  avatar       String?
+  sum          Decimal @db.Decimal(15, 2)
+  data         String? @db.Text
+  transaction  String?
+  beforepay    Decimal? @db.Decimal(15, 2)
+  afterpay     Decimal? @db.Decimal(15, 2)
+  status       Int     @default(0)
+  percent      Decimal? @db.Decimal(5, 2)
+  img_system   String?
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+model Withdraw {
+  id           Int     @id @default(autoincrement())
+  user_id      Int
+  sum          Decimal @db.Decimal(15, 2)
+  status       Int     @default(0)
+  data         String? @db.Text
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("withdraws")
+}
+
+model SystemDep {
+  id           Int     @id @default(autoincrement())
+  name         String?
+  min_sum      Decimal? @db.Decimal(15, 2)
+  comm_percent Decimal? @db.Decimal(5, 2)
+  img          String?
+  ps           String?
+  number_ps    String?
+  sort         Int     @default(0)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  @@map("system_dep")
+}
+
+model SystemWithdraw {
+  id            Int     @id @default(autoincrement())
+  name          String?
+  min_sum       Decimal? @db.Decimal(15, 2)
+  comm_percent  Decimal? @db.Decimal(5, 2)
+  comm_rub      Decimal? @db.Decimal(15, 2)
+  img           String?
+  color         String?
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  @@map("system_withdraw")
+}
+
+model Promo {
+  id        Int     @id @default(autoincrement())
+  name      String
+  sum       Decimal @db.Decimal(15, 2)
+  active    Int     @default(0)
+  user_id   Int     @default(0)
+  user_name String?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("promos")
+}
+
+model Message {
+  id        Int     @id @default(autoincrement())
+  user_id   Int
+  message   String  @db.Text
+  created_at DateTime @default(now())
+
+  @@map("messages")
+}
+
+model RandomKey {
+  id       Int    @id @default(autoincrement())
+  name_key String
+  games    Int    @default(0)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("random_keys")
+}
+
+model BoomCity {
+  id        Int     @id @default(autoincrement())
+  user_id   Int
+  bet       Decimal @db.Decimal(15, 2)
+  coeff     String?
+  img       String?
+  login     String?
+  created_at DateTime @default(now())
+
+  @@map("boom_city")
+}

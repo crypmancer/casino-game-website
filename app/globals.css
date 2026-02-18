@@ -1,0 +1,4 @@
+/* Minimal reset; main theme from /css/main.css and /css/dark.css */
+* {
+  box-sizing: border-box;
+}

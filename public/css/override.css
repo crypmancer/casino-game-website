@@ -1,0 +1,4 @@
+/* Font fallback when Gotham Pro is not loaded (e.g. missing font files) */
+html, body {
+  font-family: 'Gotham Pro', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
